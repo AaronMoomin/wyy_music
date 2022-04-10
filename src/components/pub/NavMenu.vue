@@ -4,7 +4,7 @@
         class="el-menu-vertical-demo"
         default-active="1">
       <el-menu-item index="1">
-        <router-link to="/discoverMusic" slot="title">
+        <router-link to="/discoverMusic/recommend" slot="title">
           发现音乐
         </router-link>
       </el-menu-item>
@@ -37,31 +37,31 @@
       <p>我的音乐</p>
       <el-menu-item index="7">
         <router-link to="/my/localDownload">
-          <i class="iconfont icon-xiazai"></i>
+        <i class="iconfont icon-xiazai"></i>
           本地与下载
         </router-link>
       </el-menu-item>
       <el-menu-item index="8">
         <router-link to="/my/recentPlay">
-          <i class="iconfont icon-zuijinbofang"></i>
+        <i class="iconfont icon-zuijinbofang"></i>
           最近播放
         </router-link>
       </el-menu-item>
       <el-menu-item index="9">
         <router-link to="/my/myMusicCloud">
-          <i class="iconfont icon-yunpan"></i>
+        <i class="iconfont icon-yunpan"></i>
           我的音乐云盘
         </router-link>
       </el-menu-item>
       <el-menu-item index="10">
         <router-link to="/my/myBlog">
-          <i class="iconfont icon-wodeboke"></i>
+        <i class="iconfont icon-wodeboke"></i>
           我的博客
         </router-link>
       </el-menu-item>
       <el-menu-item index="11">
         <router-link to="/my/myCollection">
-          <i class="iconfont icon-shoucang"></i>
+        <i class="iconfont icon-shoucang"></i>
           我的收藏
         </router-link>
       </el-menu-item>
@@ -113,13 +113,25 @@ export default {
     }
   },
   watch: {
+    // 监听uid变化
+    uid:{
+      deep:true,
+      immediate:true,
+      handler(){
+        this.playLists = []
+        this.createPlayList = []
+        this.collectPlayList = []
+      }
+    },
     getuid(){
       this.uid = this.$store.state.uid
+      console.log(this.uid)
       this.axios.get(`/user/playlist`, {
         params: {
           uid: this.uid
         }
       }).then(response => {
+        console.log('@',response.data.playlist);
         this.playLists = response.data.playlist
         this.playLists.forEach(item => {
           if (item.creator.userId == this.uid) {
@@ -135,6 +147,10 @@ export default {
   },
   mounted() {
     // this.slotPlayLists()
+    // this.$bus.$on('uid',(data)=>{
+    //   this.uid = data
+    // }
+    // )
   }
 }
 </script>

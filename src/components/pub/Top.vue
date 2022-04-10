@@ -15,17 +15,18 @@
       <!--   个人信息 信息   -->
       <el-col :span="12">
         <div class="main_right">
-
+          
           <transition
               enter-active-class="animate__animated animate__bounceIn"
               leave-active-class="animate__animated animate__fadeOutLeft">
             <div class="tx_box" v-if="isLogin" :key="0">
-              <img :src="txImg" alt="">
-              <span>{{ username }}</span>
-            </div>
-            <div class="tx_box" v-else @click="primgLogin" :key="1">
-              <span>点击登录</span>
-            </div>
+            <img :src="txImg" alt="">
+            <span>{{ username }}</span>
+            <span @click="Logout">退出登录</span>
+          </div>
+           <div class="tx_box" v-else @click="primgLogin" :key="1">
+            <span>点击登录</span>
+          </div>
           </transition>
           <div class="mail">
             <i class="iconfont icon-icon-mail"></i>
@@ -57,7 +58,7 @@
         <img src="../../assets/images/loginBac.png" alt="">
         <el-form :model="form">
           <el-input class="login_form_input" placeholder="请输入手机号/邮箱" v-model="form.number"></el-input>
-          <el-input type="password" class="login_form_input" placeholder="密码" v-model="form.password"></el-input>
+          <el-input type="password" class="login_form_input" placeholder="密码" v-model="form.password"  @keydown.enter.native="login"></el-input>
           <el-button class="login" @click="login">登录</el-button>
         </el-form>
       </div>
@@ -91,6 +92,8 @@ export default {
       form: {
         number: '18318199503',
         password: '141948253'
+        // number: '13434299732',
+        // password: '147359862'
       },
       timer: ''
     }
@@ -173,7 +176,7 @@ export default {
         timestamp: Date.parse(new Date())
       }).then(response => {
         console.log(response)
-
+        
         // 谷歌94版本以后不支持
         // this.$cookies.set('MUSIC_U', response.data.cookie, 7)
         localStorage.setItem('MUSIC_U', response.data.cookie)
@@ -271,6 +274,22 @@ export default {
       } else {
         this.$message.error('还未登录')
       }
+    },
+    // 退出登录
+    Logout(){
+      this.axios.get(`/logout`).then(response => {
+        if (response.data.code == 200){
+          this.$message('退出成功')
+          this.$cookie.delete('MUSIC_U')
+          this.isLogin = false
+          this.uid = ''
+          this.setUid(this.uid)
+          this.getAccount()
+          this.$router.push('/discoverMusic/recommend')
+        }
+      }).catch(err => {
+        console.log(err)
+      })
     }
   },
   mounted() {
